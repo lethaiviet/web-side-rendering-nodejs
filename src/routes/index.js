@@ -1,9 +1,9 @@
-import { Router } from 'express'
-const router = Router()
+import usersRouter from './users'
+import customersRouter from './customers'
 
-/* GET home page. */
-router.get('/', function (req, res, next) {
-    res.render('home', { title: 'Express' })
-})
+function router(app) {
+    app.use('/user', usersRouter)
+    app.use('/customer', customersRouter)
+}
 
 export default router
