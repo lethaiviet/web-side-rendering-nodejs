@@ -1,0 +1,22 @@
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Customers list</h1>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>First name</th>
+            <th>Last name</th>
+            <th>Age</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each customers}}
+        <tr>
+            <td>{{first_name}}</td>
+            <td>{{last_name}}</td>
+            <td>{{age}}</td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>

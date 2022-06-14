@@ -1,10 +1,8 @@
 import { Router } from 'express'
 const router = Router()
+import { CustomersControllers } from '../controllers/customersControllers'
 
 /* GET home page. */
-router.get('/', function (req, res, next) {
-    console.log('hello')
-    res.render('home', { title: 'Express' })
-})
+router.get('/', CustomersControllers.listCustomers)
 
 export default router
