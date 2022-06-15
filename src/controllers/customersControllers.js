@@ -1,15 +1,23 @@
 import Customers from '../models/Customers'
 
 class CustomersControllers {
-    static async listCustomers(req, res, next) {
-        let customers = []
-        try {
-            customers = await Customers.find()
-        } catch (error) {
-            console.error('[ERROR] - getCustomersController ' + error)
-        }
+    static listCustomers(req, res, next) {
+        Customers.find()
+            .then(customers =>
+                res.render('customers', { customers: customers }),
+            )
+            .catch(next)
+    }
 
-        res.render('customers', { customers: customers })
+    static async addCustomers(req, res, next) {
+        try {
+            console.log('Got body:', req.body)
+            const newCustomer = new Customers(req.body)
+            await newCustomer.save()
+            next()
+        } catch (e) {
+            res.status(400).json(e.message)
+        }
     }
 }
 

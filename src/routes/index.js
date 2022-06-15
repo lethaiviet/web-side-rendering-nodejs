@@ -3,7 +3,7 @@ import customersRouter from './customers'
 
 function router(app) {
     app.use('/user', usersRouter)
-    app.use('/customer', customersRouter)
+    app.use('/customers', customersRouter)
 }
 
 export default router

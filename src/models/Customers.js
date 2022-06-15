@@ -1,28 +1,32 @@
 import mongoose, { Schema } from 'mongoose'
 
-const Customer = new Schema({
+const CustomerSchema = new Schema({
     first_name: {
         type: String,
-        minlength: 1,
+        minLength: [1, "'first_name' is too short!"],
         maxlength: 10,
+        required: true,
     },
     last_name: {
         type: String,
-        minlength: 1,
+        minlength: [1, "'last_name' is too short!"],
         maxlength: 10,
+        required: true,
     },
     age: {
         type: Number,
+        min: [1, "'age' should be in [1, 130]"],
+        max: [130, "'age' should be in [1, 130]"],
         required: true,
     },
     createAt: {
         type: Date,
-        default: Date.now,
+        createAt: Date.now,
     },
     updateAt: {
         type: Date,
-        default: Date.now,
+        updateAt: Date.now,
     },
 })
 
-export default mongoose.model('Customers', Customer)
+export default mongoose.model('Customers', CustomerSchema)
