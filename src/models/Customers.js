@@ -35,4 +35,9 @@ CustomerSchema.plugin(mongoose_delete, {
     overrideMethods: 'all',
 })
 
+CustomerSchema.pre('findOneAndUpdate', function (next) {
+    this.options.runValidators = true
+    next()
+})
+
 export default mongoose.model('Customers', CustomerSchema)

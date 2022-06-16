@@ -41,7 +41,8 @@
                         <td>{{last_name}}</td>
                         <td>{{age}}</td>
                         <td>
-                            <i type="button" class="bi bi-pencil-square" style="font-size: 21px;"></i>
+                            <i type="button" data-bs-id={{_id}} class="update-customer-btn bi bi-pencil-square"
+                                data-bs-toggle="modal" data-bs-target="#add-item-modal" style="font-size: 21px;"></i>
                             <i type="button" data-bs-id={{_id}} class="delete-customer-btn bi bi-trash"
                                 data-bs-toggle="modal" data-bs-target="#delete-item-modal" style="font-size: 21px;"></i>
                         </td>
@@ -53,40 +54,78 @@
     </div>
 </div>
 
-<!-- Edit Modal HTML -->
 {{> modals/add-item nameForm="Add Customer"}}
-
-
-<!-- Delete Modal HTML -->
 {{> modals/delete-item nameForm="Delete Customer"}}
 
 <script>
     $(document).ready(function () {
+        const ADD_CUSTOMER = "Add Customer"
+        const UPDATE_CUSTOMER = "Update Customer"
+        let TITLE = ADD_CUSTOMER
+
+        const ALL_FIELDS = ["first_name", "last_name", "age"]
+
         const getDataForm = (form, keys) => {
             return new Map(keys.map(k => [k, form.find(`[name=${k}]`).val()]))
         }
 
         const setTitleForAddItemForm = (title) => {
+            TITLE = title
             $("#add-item-form .modal-title").text(title)
+        }
+
+        const setDataForm = (form, keys, data = null) => {
+            for (const k of keys) {
+                form.find(`[name=${k}]`).val(data ? data[k] : "")
+            }
+        }
+
+        const clearDataForm = (form, keys) => {
+            setDataForm(form, keys)
+        }
+
+        const addNewCustomerByAPI = () => {
+            const $form = $("#add-item-form")
+            const url = './customers'
+            const data = getDataForm($form, ALL_FIELDS)
+
+            $.post(url,
+                Object.fromEntries(data),
+                function (data, status) {
+                    location.reload(true);
+                }
+            ).fail(function (xhr, status, error) {
+                alert(xhr.responseText)
+            });
+        }
+
+        const updateCustomerByAPI = (id) => {
+            const $form = $("#add-item-form")
+            const url = './customers?_method=PUT'
+            const data = getDataForm($form, ALL_FIELDS)
+            console.log({ ...Object.fromEntries(data), _id: id })
+            $.ajax({
+                url: url,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ ...Object.fromEntries(data), _id: id }),
+            }).done(function (data) {
+                location.reload(true);
+            }).fail(function (xhr, status, error) {
+                alert(xhr.responseText)
+            });
         }
 
         $("#add-item-form").submit(function (event) {
             event.preventDefault()
 
-            const $form = $(this)
-            const url = './customers'
-            const data = getDataForm($form, ["first_name", "last_name", "age"])
-
-            const posting = $.post(url,
-                Object.fromEntries(data),
-                function (data, status) {
-                    location.reload(true);
-                }
-            );
-
-            posting.fail(function (xhr, status, error) {
-                alert(xhr.responseText)
-            });
+            if (TITLE == ADD_CUSTOMER) {
+                addNewCustomerByAPI()
+            } else {
+                const id = $(this).find("[type=submit]").attr("data-bs-id")
+                console.log(id)
+                updateCustomerByAPI(id)
+            }
         })
 
         $(".delete-customer-btn").click(function (event) {
@@ -96,7 +135,23 @@
         })
 
         $(".add-new-btn").click(function () {
-            setTitleForAddItemForm("Add Customer")
+            setTitleForAddItemForm(ADD_CUSTOMER)
+            clearDataForm($("#add-item-form"), ALL_FIELDS)
+        })
+
+        $(".update-customer-btn").click(function () {
+            setTitleForAddItemForm(UPDATE_CUSTOMER)
+
+            const id = $(this).attr("data-bs-id")
+            $.get(`./customers/${id}`,
+                function (data, status) {
+                    setDataForm($("#add-item-form"), ALL_FIELDS, data)
+                    $("#add-item-form").find("[type=submit]").attr("data-bs-id", data._id)
+                }
+            ).fail(function (xhr, status, error) {
+                alert(xhr.responseText)
+            });
+
         })
     });
 </script>
