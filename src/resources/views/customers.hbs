@@ -10,9 +10,9 @@
                         <a type="button" class="btn btn-primary" href="/customers/bin">
                             <i class="bi bi-archive"></i><span>Go to recycle bin</span></a>
                         </a>
-                        <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                        <button type="button" class="add-new-btn btn btn-success" data-bs-toggle="modal"
                             data-bs-target="#add-item-modal">
-                            <i class="bi bi-plus-circle"></i><span>Add New Employee</span></a>
+                            <i class="bi bi-plus-circle"></i><span>Add New</span></a>
                         </button>
                         <button type="button" class="btn btn-danger" data-bs-toggle="modal"
                             data-bs-target="#delete-item-modal">
@@ -66,6 +66,10 @@
             return new Map(keys.map(k => [k, form.find(`[name=${k}]`).val()]))
         }
 
+        const setTitleForAddItemForm = (title) => {
+            $("#add-item-form .modal-title").text(title)
+        }
+
         $("#add-item-form").submit(function (event) {
             event.preventDefault()
 
@@ -89,6 +93,10 @@
             const id = $(this).attr("data-bs-id")
             const action = `./customers/${id}?_method=DELETE`
             $("#delete-item-form").attr("action", action)
+        })
+
+        $(".add-new-btn").click(function () {
+            setTitleForAddItemForm("Add Customer")
         })
     });
 </script>

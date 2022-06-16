@@ -9,7 +9,7 @@
                 <div class="modal-body">
                     {{#each fieldsInput}}
                     <div class="form-group">
-                        <label>{{this}}</label>
+                        <label>{{formatFieldName this}}</label>
                         <input type="text" name={{this}} class="form-control" required>
                     </div>
                     {{/each}}

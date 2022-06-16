@@ -10,6 +10,7 @@ import Handlebars from 'handlebars'
 import { allowInsecurePrototypeAccess } from '@handlebars/allow-prototype-access'
 import { engine } from 'express-handlebars'
 import methodOverride from 'method-override'
+import handeBarHelper from './handelbar/handeBarHelper'
 
 const app = express()
 
@@ -34,17 +35,7 @@ app.engine(
     engine({
         extname: '.hbs',
         handlebars: allowInsecurePrototypeAccess(Handlebars),
-        helpers: {
-            sum: (a, b) => a + b,
-            icon: iconName => {
-                iconName = iconName.toString()
-                return new Handlebars.SafeString(
-                    "<span class='glyphicon glyphicon-" +
-                        iconName +
-                        "'></span>",
-                )
-            },
-        },
+        helpers: handeBarHelper,
     }),
 )
 app.set('view engine', '.hbs')
