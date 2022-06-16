@@ -7,6 +7,9 @@ const router = Router()
 //[GET] customers/
 router.get('/', CustomersControllers.listCustomers)
 
+//[GET] customers/bin
+router.get('/bin', CustomersControllers.listDeletedCustomers)
+
 //[POST] customers/
 router.post('/', CustomersControllers.addCustomers, refreshPage)
 

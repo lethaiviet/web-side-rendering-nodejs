@@ -3,8 +3,17 @@ import Customers from '../models/Customers'
 class CustomersControllers {
     static listCustomers(req, res, next) {
         Customers.find()
+            .then(customers => {
+                const fieldsInput = ['first_name', 'last_name', 'age']
+                return res.render('customers', { customers, fieldsInput })
+            })
+            .catch(next)
+    }
+
+    static listDeletedCustomers(req, res, next) {
+        Customers.findDeleted()
             .then(customers =>
-                res.render('customers', { customers: customers }),
+                res.render('customers-bin', { customers: customers }),
             )
             .catch(next)
     }

@@ -7,12 +7,15 @@
                         <h2>Manage <b>Customers</b></h2>
                     </div>
                     <div class="col-sm-6">
+                        <a type="button" class="btn btn-primary" href="/customers/bin">
+                            <i class="bi bi-archive"></i><span>Go to recycle bin</span></a>
+                        </a>
                         <button type="button" class="btn btn-success" data-bs-toggle="modal"
-                            data-bs-target="#addEmployeeModal">
+                            data-bs-target="#add-item-modal">
                             <i class="bi bi-plus-circle"></i><span>Add New Employee</span></a>
                         </button>
                         <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                            data-bs-target="#deleteEmployeeModal">
+                            data-bs-target="#delete-item-modal">
                             <i class="bi bi-dash-circle"></i><span>Delete</span></a>
                         </button>
                     </div>
@@ -22,6 +25,7 @@
                 <thead>
                     <tr>
                         <th><input type="checkbox" id="checkbox-select-all"></th>
+                        <th>#</th>
                         <th>First name</th>
                         <th>Last name</th>
                         <th>Age</th>
@@ -32,14 +36,14 @@
                     {{#each customers}}
                     <tr>
                         <td><input type="checkbox"></td>
+                        <td>{{sum @index 1}}</td>
                         <td>{{first_name}}</td>
                         <td>{{last_name}}</td>
                         <td>{{age}}</td>
                         <td>
                             <i type="button" class="bi bi-pencil-square" style="font-size: 21px;"></i>
-                            <i type="button" data-bs-id={{_id}} class="delete-customer bi bi-trash"
-                                data-bs-toggle="modal" data-bs-target="#deleteEmployeeModal"
-                                style="font-size: 21px;"></i>
+                            <i type="button" data-bs-id={{_id}} class="delete-customer-btn bi bi-trash"
+                                data-bs-toggle="modal" data-bs-target="#delete-item-modal" style="font-size: 21px;"></i>
                         </td>
                     </tr>
                     {{/each}}
@@ -48,59 +52,13 @@
         </div>
     </div>
 </div>
+
 <!-- Edit Modal HTML -->
-<div id="addEmployeeModal" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form id="add-employee-form" method="POST" action="./customers">
-                <div class="modal-header">
-                    <h4 class="modal-title">Add Employee</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label>First name</label>
-                        <input type="text" name="first_name" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Last name</label>
-                        <input type="text" name="last_name" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label>age</label>
-                        <input type="number" name="age" class="form-control" required>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <input type="button" class="btn btn-default" data-bs-dismiss="modal" value="Cancel">
-                    <input type="submit" class="btn btn-success" value="Add">
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+{{> modals/add-item nameForm="Add Customer"}}
 
 
 <!-- Delete Modal HTML -->
-<div id="deleteEmployeeModal" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form id="delete-custom-form" method="POST" action="">
-                <div class="modal-header">
-                    <h4 class="modal-title">Delete Employee</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Are you sure you want to delete?</p>
-                </div>
-                <div class="modal-footer">
-                    <input type="button" class="btn btn-default" data-bs-dismiss="modal" value="Cancel">
-                    <input type="submit" class="btn btn-danger" value="Delete">
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+{{> modals/delete-item nameForm="Delete Customer"}}
 
 <script>
     $(document).ready(function () {
@@ -108,11 +66,11 @@
             return new Map(keys.map(k => [k, form.find(`[name=${k}]`).val()]))
         }
 
-        $("#add-employee-form").submit(function (event) {
+        $("#add-item-form").submit(function (event) {
             event.preventDefault()
 
             const $form = $(this)
-            const url = $form.attr('action')
+            const url = './customers'
             const data = getDataForm($form, ["first_name", "last_name", "age"])
 
             const posting = $.post(url,
@@ -127,10 +85,10 @@
             });
         })
 
-        $(".delete-customer").click(function (event) {
+        $(".delete-customer-btn").click(function (event) {
             const id = $(this).attr("data-bs-id")
             const action = `./customers/${id}?_method=DELETE`
-            $("#delete-custom-form").attr("action", action)
+            $("#delete-item-form").attr("action", action)
         })
     });
 </script>
