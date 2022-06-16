@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose'
+import mongoose_delete from 'mongoose-delete'
 
 const CustomerSchema = new Schema({
     first_name: {
@@ -27,6 +28,11 @@ const CustomerSchema = new Schema({
         type: Date,
         updateAt: Date.now,
     },
+})
+
+CustomerSchema.plugin(mongoose_delete, {
+    deletedAt: true,
+    overrideMethods: 'all',
 })
 
 export default mongoose.model('Customers', CustomerSchema)

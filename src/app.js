@@ -9,6 +9,7 @@ import MongoDB from './config/database'
 import Handlebars from 'handlebars'
 import { allowInsecurePrototypeAccess } from '@handlebars/allow-prototype-access'
 import { engine } from 'express-handlebars'
+import methodOverride from 'method-override'
 
 const app = express()
 
@@ -20,6 +21,7 @@ app.use(
     }),
 )
 app.use(cookieParser())
+app.use(methodOverride('_method'))
 app.use(express.static(path.join(__dirname, 'resources', 'css')))
 app.use(
     express.static(

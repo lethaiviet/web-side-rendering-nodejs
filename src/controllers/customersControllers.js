@@ -12,8 +12,17 @@ class CustomersControllers {
     static async addCustomers(req, res, next) {
         try {
             console.log('Got body:', req.body)
-            const newCustomer = new Customers(req.body)
-            await newCustomer.save()
+            await Customers.create(req.body)
+            next()
+        } catch (e) {
+            res.status(400).json(e.message)
+        }
+    }
+
+    static async deleteCustomer(req, res, next) {
+        try {
+            const id = req.params.id
+            await Customers.deleteById(id)
             next()
         } catch (e) {
             res.status(400).json(e.message)

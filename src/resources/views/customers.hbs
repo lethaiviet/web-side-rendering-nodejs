@@ -1,7 +1,3 @@
-{{!-- <div
-    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Customers list</h1>
-</div> --}}
 <div class="container-xl">
     <div class="table-responsive">
         <div class="table-wrapper">
@@ -22,20 +18,29 @@
                     </div>
                 </div>
             </div>
-            <table class="table">
+            <table class="table table-hover">
                 <thead>
                     <tr>
+                        <th><input type="checkbox" id="checkbox-select-all"></th>
                         <th>First name</th>
                         <th>Last name</th>
                         <th>Age</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     {{#each customers}}
                     <tr>
+                        <td><input type="checkbox"></td>
                         <td>{{first_name}}</td>
                         <td>{{last_name}}</td>
                         <td>{{age}}</td>
+                        <td>
+                            <i type="button" class="bi bi-pencil-square" style="font-size: 21px;"></i>
+                            <i type="button" data-bs-id={{_id}} class="delete-customer bi bi-trash"
+                                data-bs-toggle="modal" data-bs-target="#deleteEmployeeModal"
+                                style="font-size: 21px;"></i>
+                        </td>
                     </tr>
                     {{/each}}
                 </tbody>
@@ -80,14 +85,13 @@
 <div id="deleteEmployeeModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form>
+            <form id="delete-custom-form" method="POST" action="">
                 <div class="modal-header">
                     <h4 class="modal-title">Delete Employee</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you want to delete these Records?</p>
-                    <p class="text-warning"><small>This action cannot be undone.</small></p>
+                    <p>Are you sure you want to delete?</p>
                 </div>
                 <div class="modal-footer">
                     <input type="button" class="btn btn-default" data-bs-dismiss="modal" value="Cancel">
@@ -121,6 +125,12 @@
             posting.fail(function (xhr, status, error) {
                 alert(xhr.responseText)
             });
+        })
+
+        $(".delete-customer").click(function (event) {
+            const id = $(this).attr("data-bs-id")
+            const action = `./customers/${id}?_method=DELETE`
+            $("#delete-custom-form").attr("action", action)
         })
     });
 </script>
