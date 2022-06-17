@@ -16,10 +16,17 @@ router.get('/:id', CustomersControllers.getCustomerById)
 //[PUT] customers/
 router.put('/', CustomersControllers.updateCustomer)
 
+//[DELETE] customers/
+router.delete('/', CustomersControllers.sortDeleteCustomer, refreshPage)
+
+//[DELETE] customers/hard-delete
+router.delete(
+    '/hard-delete',
+    CustomersControllers.hardDeleteCustomer,
+    refreshPage,
+)
+
 //[POST] customers/
 router.post('/', CustomersControllers.addCustomers)
-
-//[DELETE] customers/:id
-router.delete('/:id', CustomersControllers.deleteCustomer, refreshPage)
 
 export default router

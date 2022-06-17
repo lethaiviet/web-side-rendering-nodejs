@@ -39,10 +39,20 @@ class CustomersControllers {
         }
     }
 
-    static async deleteCustomer(req, res, next) {
+    static async hardDeleteCustomer(req, res, next) {
         try {
-            const id = req.params.id
-            await Customers.deleteById(id)
+            const ids = req.body.ids
+            await Customers.deleteMany({ _id: { $in: ids } })
+            next()
+        } catch (e) {
+            res.status(400).json(e.message)
+        }
+    }
+
+    static async sortDeleteCustomer(req, res, next) {
+        try {
+            const ids = req.body.ids
+            await Customers.delete({ _id: { $in: ids } })
             next()
         } catch (e) {
             res.status(400).json(e.message)

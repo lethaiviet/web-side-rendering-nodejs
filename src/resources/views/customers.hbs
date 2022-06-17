@@ -14,7 +14,7 @@
                             data-bs-target="#add-item-modal">
                             <i class="bi bi-plus-circle"></i><span>Add New</span></a>
                         </button>
-                        <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                        <button type="button" class="delete-customers-btn btn btn-danger" data-bs-toggle="modal"
                             data-bs-target="#delete-item-modal">
                             <i class="bi bi-dash-circle"></i><span>Delete</span></a>
                         </button>
@@ -24,7 +24,7 @@
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th><input type="checkbox" id="checkbox-select-all"></th>
+                        <th><input type="checkbox" id="select-all-checkbox"></th>
                         <th>#</th>
                         <th>First name</th>
                         <th>Last name</th>
@@ -35,7 +35,7 @@
                 <tbody>
                     {{#each customers}}
                     <tr>
-                        <td><input type="checkbox"></td>
+                        <td><input class="select-item-checkbox" type="checkbox" value={{_id}}></td>
                         <td>{{sum @index 1}}</td>
                         <td>{{first_name}}</td>
                         <td>{{last_name}}</td>
@@ -62,6 +62,7 @@
         const ADD_CUSTOMER = "Add Customer"
         const UPDATE_CUSTOMER = "Update Customer"
         let TITLE = ADD_CUSTOMER
+        let LIST_SELTECTED_CUSTOMERS_ID = []
 
         const ALL_FIELDS = ["first_name", "last_name", "age"]
 
@@ -101,11 +102,10 @@
 
         const updateCustomerByAPI = (id) => {
             const $form = $("#add-item-form")
-            const url = './customers?_method=PUT'
             const data = getDataForm($form, ALL_FIELDS)
-            console.log({ ...Object.fromEntries(data), _id: id })
+
             $.ajax({
-                url: url,
+                url: './customers?_method=PUT',
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({ ...Object.fromEntries(data), _id: id }),
@@ -116,6 +116,11 @@
             });
         }
 
+        const getAllSelectedCutomerId = () => {
+            return $('.select-item-checkbox:checked').map(function () { return $(this).val() }).get()
+        }
+
+        //add event for button submit on add new/update customer modal
         $("#add-item-form").submit(function (event) {
             event.preventDefault()
 
@@ -123,15 +128,34 @@
                 addNewCustomerByAPI()
             } else {
                 const id = $(this).find("[type=submit]").attr("data-bs-id")
-                console.log(id)
                 updateCustomerByAPI(id)
             }
         })
 
-        $(".delete-customer-btn").click(function (event) {
+        $(".delete-customer-btn").click(function () {
             const id = $(this).attr("data-bs-id")
-            const action = `./customers/${id}?_method=DELETE`
-            $("#delete-item-form").attr("action", action)
+            LIST_SELTECTED_CUSTOMERS_ID = [id]
+            //const action = `./customers/${id}?_method=DELETE`
+            //$("#delete-item-form").attr("action", action)
+        })
+
+        $(".delete-customers-btn").click(function () {
+            LIST_SELTECTED_CUSTOMERS_ID = getAllSelectedCutomerId();
+        })
+
+        $("#delete-item-form").submit(function (event) {
+            console.log('./customers/delete?_method=DELETE')
+            event.preventDefault()
+            $.ajax({
+                url: './customers?_method=DELETE',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ ids: LIST_SELTECTED_CUSTOMERS_ID }),
+            }).done(function (data) {
+                location.reload(true);
+            }).fail(function (xhr, status, error) {
+                alert(xhr.responseText)
+            });
         })
 
         $(".add-new-btn").click(function () {
@@ -152,6 +176,18 @@
                 alert(xhr.responseText)
             });
 
+        })
+
+        $("#select-all-checkbox").click(function () {
+            const $sel_all_chkbox = $(this)
+            const isChecked = $sel_all_chkbox.is(":checked")
+            $('.select-item-checkbox').prop("checked", isChecked)
+        })
+
+        $('.select-item-checkbox').click(function () {
+            const isCheckedAll = $('.select-item-checkbox:checked').length === $('.select-item-checkbox').length
+            console.log(isCheckedAll)
+            $('#select-all-checkbox').prop("checked", isCheckedAll)
         })
     });
 </script>
